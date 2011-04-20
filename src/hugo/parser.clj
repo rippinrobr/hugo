@@ -28,18 +28,24 @@
 (defn format-nominees [works]
   (apply str (map if-work-not-nil works)))
 
+(defn format-output [novels]
+  (format "Best Novel%s\n" (format-nominees (:books novels))))
+
 ;--------------------------------------------------------------------------
 ; The code under he will come into play in the second post on this subject
 ;(defn get-award-links []
   ;(map #(:attrs %)   (html/select (fetch-url *base-url*)
                     ;#{[:div#content :li.page_item :a] [:li.page.item.subtext html/first-child]})))
 
-;(defn get-awards []
-;  (map #(merge % {:nominees (first (get-awards-per-year (:href %)))}) (get-award-links)))
+(defn get-awards []
+  (map #(merge % {:nominees (first (get-awards-per-year (:href %)))}) (get-award-links)))
 
-;(defn format-output [awards]
-  ;(map #(str "\n" (:award %) (format-nominees (:books %)) "\n") awards))
+(defn testaa [rec]
+  (println (apply str (map #(str "Year " (format-output (first (get-awards-per-year (:href %)))) "\n") rec))))
 
-;(defn testaa [rec]
   ;(duck/spit "2010_hugo.txt" (apply str (format-output rec))))
 
+
+; USE the get-awards method to retrieve all Novel winners
+;  Change the map in its 'guts' to the following:
+;   (map format-output (first
