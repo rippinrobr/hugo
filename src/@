@@ -1,5 +1,7 @@
 (ns hugo.parser
-(:require [net.cgrand.enlive-html :as html]))
+(:require [net.cgrand.enlive-html :as html])
+(:require [clojure.contrib.duck-streams :as duck])
+(:require [clojure.contrib.string :as ccstring]))
 
 (def *base-url* "http://www.thehugoawards.org/hugo-history/")
 
@@ -11,7 +13,8 @@
 
 (defn get-book-info [nominees]
   (map #(if (not (nil? (first (:content (first (:content %)))))) (merge {:winner (if (not (nil? (:attrs %))) (:class (:attrs %)))} 
-               {:title (str (first (:content (first (:content %)))) (:content (first (:content %)))))}
+               {:title (str (ccstring/replace-str "\"" "" (first (:content (first (:content %))))) (second (:content %)))}
+               ;{:title (str (first (:content (first (:content %)))) (second (:content %)))}
                )) nominees))
 
 (defn parse-award-page [url]
@@ -36,3 +39,5 @@
 (defn format-output [awards]
   (map #(str "\n" (:award %) (format-nominees (:books %)) "\n") awards))
 
+(defn testaa [rec]
+  (duck/spit "2010_hugo.txt" (apply str (format-output rec))))
