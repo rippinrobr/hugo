@@ -1,6 +1,5 @@
 (ns hugo.parser
  (:require [net.cgrand.enlive-html :as html])
- (:require [clojure.contrib.duck-streams :as duck])
  (:require [clojure.contrib.string :as ccstring]))
 
 (defn fetch-url 
@@ -31,15 +30,21 @@
                {:books (get-book-info (rest (second %)))}
                {:year (first (:content (first (html/select page-content #{[:div#content :h2]}))))}) (parse-award-page page-content))))
 
-(defn if-work-not-nil 
-  "Formats the book's line like so: title author and WINNER if it won as long as work is not nil"
-  [work]
-  (str (if (not (nil? (:title work))) (str "\n\t" (:title work)) ) (if (not (nil? (:winner work))) (str " (WINNER)") ) ""))
+(def *base-url* "http://www.thehugoawards.org/hugo-history/")
 
-(defn format-nominees [works]
-  "formats all winners and nominees for a given award into one string"
-  (apply str (map if-work-not-nil works)))
+(defn get-award-links []
+  (map #(:attrs %)   (html/select (fetch-url *base-url*)
+                    #{[:div#content :li.page_item :a] [:li.page.item.subtext html/first-child]})))
 
-(defn format-output [novels]
-  "formats the award section including award title, winners and nominees"
-  (format "%s - Best Novel%s\n" (:year novels) (format-nominees (:books novels))))
+;(defn if-work-not-nil 
+  ;"Formats the book's line like so: title author and WINNER if it won as long as work is not nil"
+  ;[work]
+  ;(str (if (not (nil? (:title work))) (str "\n\t" (:title work)) ) (if (not (nil? (:winner work))) (str " (WINNER)") ) ""))
+
+;(defn format-nominees [works]
+  ;"formats all winners and nominees for a given award into one string"
+  ;(apply str (map if-work-not-nil works)))
+
+;(defn format-output [novels]
+  ;"formats the award section including award title, winners and nominees"
+  ;(format "%s - Best Novel%s\n" (:year novels) (format-nominees (:books novels))))
