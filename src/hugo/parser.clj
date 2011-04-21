@@ -2,6 +2,8 @@
  (:require [net.cgrand.enlive-html :as html])
  (:require [clojure.contrib.string :as ccstring]))
 
+(defstruct work :winner :title :author)
+
 (defn fetch-url 
   "Retrieves the web page specified by the url"
   [url] (html/html-resource (java.net.URL. url)))
@@ -10,9 +12,11 @@
   "Formats the book data so that each book has a title which contais the book's title, author, and sometimes the publisher.  I also shows if
    the book was a winner"
   [nominees]
-  (map #(if (not (nil? (first (:content (first (:content %)))))) (merge {:winner (if (not (nil? (:attrs %))) (:class (:attrs %)))} 
-               {:title (str (ccstring/replace-str "\"" "" (first (:content (first (:content %))))) (second (:content %)))}
-               )) nominees))
+  (map #(if (not (nil? (first (:content (first (:content %)))))) 
+                (struct work (if (not (nil? (:attrs %))) (:class (:attrs %))) 
+                             (str (ccstring/replace-str "\"" "" (first (:content (first (:content %))))) " ") 
+                             (ccstring/replace-str " by " "" (second (:content %)))))
+                             nominees))
 
 (defn parse-award-page 
   "Takes the page data retrieved and formats it in such away that each hugo award group is stored with ((award title) (winner and nominees))"
@@ -35,16 +39,3 @@
 (defn get-award-links []
   (map #(:attrs %)   (html/select (fetch-url *base-url*)
                     #{[:div#content :li.page_item :a] [:li.page.item.subtext html/first-child]})))
-
-;(defn if-work-not-nil 
-  ;"Formats the book's line like so: title author and WINNER if it won as long as work is not nil"
-  ;[work]
-  ;(str (if (not (nil? (:title work))) (str "\n\t" (:title work)) ) (if (not (nil? (:winner work))) (str " (WINNER)") ) ""))
-
-;(defn format-nominees [works]
-  ;"formats all winners and nominees for a given award into one string"
-  ;(apply str (map if-work-not-nil works)))
-
-;(defn format-output [novels]
-  ;"formats the award section including award title, winners and nominees"
-  ;(format "%s - Best Novel%s\n" (:year novels) (format-nominees (:books novels))))
