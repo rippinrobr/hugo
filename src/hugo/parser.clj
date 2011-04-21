@@ -40,8 +40,10 @@
 (defn get-awards []
   (map #(merge % {:nominees (first (get-awards-per-year (:href %)))}) (get-award-links)))
 
+; THIS IS WHAT I NEED FOR the cmdline ns!  It will work for what I'm trying to do!
 (defn testaa [rec]
-  (println (apply str (map #(str "Year " (format-output (first (get-awards-per-year (:href %)))) "\n") rec))))
+  (apply str (map #(str "Year " (format-output (first (get-awards-per-year (:href %)))) "\n") rec)))
+  ;(println (apply str (map #(str "Year " (format-output (first (get-awards-per-year (:href %)))) "\n") rec))))
 
   ;(duck/spit "2010_hugo.txt" (apply str (format-output rec))))
 

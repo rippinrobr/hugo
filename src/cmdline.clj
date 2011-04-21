@@ -3,10 +3,8 @@
   (:use hugo.parser)
   (:require [clojure.contrib.duck-streams :as duck]))
 
-(def url "http://www.thehugoawards.org/hugo-history/2010-hugo-awards/")
+(defn prep-for-file [rec]
+  (apply str (map #(str "Year " (format-output (first (hugo.parser/get-awards-per-year (:href %)))) "\n") rec)))
 
 (defn -main [& args]
-    (print (str "Retrieving " url "..."))
-    (duck/spit "2010_hugo_awards.txt" 
-        (hugo.parser/format-output (first (hugo.parser/get-awards-per-year url))))
-    (println "Done!"))
+    (duck/spit "hugo_awards_best_novels.txt" (prep-for-file (take 10 (get-award-links)))))
