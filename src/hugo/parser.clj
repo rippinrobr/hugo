@@ -1,5 +1,6 @@
 (ns hugo.parser
  (:require [net.cgrand.enlive-html :as html])
+ (:require [clojure.string])
  (:require [clojure.contrib.string :as ccstring]))
 
 (defstruct work :winner :title :author)
@@ -8,15 +9,27 @@
   "Retrieves the web page specified by the url"
   [url] (html/html-resource (java.net.URL. url)))
 
+(defn split-author-publisher-str
+  [authpubstr]
+    (clojure.string/split (ccstring/replace-re #"^," "" (ccstring/replace-str "by " "" (ccstring/replace-str " by " "" authpubstr))) #"\[|\(" ))
+
+(defn parse-author
+  "Grabs the author's name"
+  [authstr] (ccstring/trim (first (split-author-publisher-str authstr))))
+
+(defn create-work-struct
+  [work-data]
+  (if (not (nil? (first (:content (first (:content work-data)))))) 
+    (struct work (if (not (nil? (:attrs work-data))) (:class (:attrs work-data))) 
+      (ccstring/replace-str "\"" "" (ccstring/trim (first (:content (first (:content work-data))))))  
+      (parse-author (second (:content work-data))))))
+  
 (defn get-book-info 
-  "Formats the book data so that each book has a title which contais the book's title, author, and sometimes the publisher.  I also shows if
+  "Formats the book data so that each book has a title which contais 
+   the book's title, author, and sometimes the publisher.  I also shows if
    the book was a winner"
   [nominees]
-  (map #(if (not (nil? (first (:content (first (:content %)))))) 
-                (struct work (if (not (nil? (:attrs %))) (:class (:attrs %))) 
-                             (str (ccstring/replace-str "\"" "" (first (:content (first (:content %))))) " ") 
-                             (ccstring/replace-str " by " "" (second (:content %)))))
-                             nominees))
+  (map create-work-struct nominees))
 
 (defn parse-award-page 
   "Takes the page data retrieved and formats it in such away that each hugo award group is stored with ((award title) (winner and nominees))"
