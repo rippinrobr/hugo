@@ -6,7 +6,7 @@
 (defstruct work :winner :title :author)
 
 (defn fetch-url 
-  "Retrieves the web page specified by the url"
+  "Retrieves the web page specified by the url and makes an html-resource out of it which is used by enlive."
   [url] (html/html-resource (java.net.URL. url)))
 
 (defn split-author-publisher-str
@@ -32,23 +32,28 @@
   (map create-work-struct nominees))
 
 (defn parse-award-page 
-  "Takes the page data retrieved and formats it in such away that each hugo award group is stored with ((award title) (winner and nominees))"
+  "Takes the page data retrieved and formats it in such away that each 
+   hugo award group is stored with ((award title) (winner and nominees))"
   [page-content]
-  (partition 2 (interleave 
-                         (last (split-at 3 (keep #(if (nil? (:attrs %)) (:content %)) 
-                                              (html/select page-content #{[:div#content (html/but :p.tropy) :p] [:p html/first-child]}))))
-  			 (map #(:content %) (html/select page-content #{[:div#content :ul ] })) )))
+  (partition 2 
+     (interleave 
+       (split-at 4 
+         (html/select page-content #{[:div#content :p] [:p html/first-child]})) 
+       (map #(:content %) (html/select page-content #{[:div#content :ul ] })))))
 
 (defn get-awards-per-year 
-  "Retrieves the awards page, parses out the categories, winners and nominees and then formats the data so that it can manipulated more easily."
+  "Retrieves the awards page, parses out the categories, 
+   winners and nominees and then formats the data so 
+   that it can manipulated more easily."
   [url]
   (let [page-content (fetch-url url)]
-    (map #(merge {:award (first (first %))} 
+   (let [year (apply str (:content (first (html/select page-content #{[:div#content :h2]}))))]
+    (map #(merge {:award (apply str (first %))} 
                {:books (get-book-info (rest (second %)))}
-               {:year (first (:content (first (html/select page-content #{[:div#content :h2]}))))}) (parse-award-page page-content))))
+ 	       {:year year})
+         (parse-award-page page-content)))))
 
-(def *base-url* "http://www.thehugoawards.org/hugo-history/")
-
-(defn get-award-links []
-  (map #(:attrs %)   (html/select (fetch-url *base-url*)
-                    #{[:div#content :li.page_item :a] [:li.page.item.subtext html/first-child]})))
+(defn get-award-links [url]
+  (map #(:attrs %)   (html/select (fetch-url url)
+                    #{[:div#content :li.page_item :a] 
+                      [:li.page.item.subtext html/first-child]})))
