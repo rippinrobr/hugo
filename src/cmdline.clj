@@ -2,6 +2,7 @@
   (:gen-class)
   (:use hugo.parser)
   (:use hugo.text-formatting)
+  (:use hugo.db.createsqlite)
   (:require [clojure.contrib.duck-streams :as duck]))
 
 (def *base-url* "http://www.thehugoawards.org/hugo-history/")
