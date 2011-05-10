@@ -4,9 +4,12 @@
  (:require [clojure.contrib.string :as ccstring]))
 
 (defstruct work :winner :title :author)
+(defstruct category :award :books :year)
 
 (defn fetch-url 
-  "Retrieves the web page specified by the url and makes an html-resource out of it which is used by enlive."
+  "Retrieves the web page specified by the url and 
+   makes an html-resource out of it which is used 
+   by enlive."
   [url] (html/html-resource (java.net.URL. url)))
 
 (defn split-author-publisher-str
@@ -47,10 +50,11 @@
    that it can manipulated more easily."
   [url]
   (let [page-content (fetch-url url)]
-   (let [year (apply str (:content (first (html/select page-content #{[:div#content :h2]}))))]
-    (map #(merge {:award (apply str (first %))} 
-               {:books (get-book-info (rest (second %)))}
- 	       {:year year})
+   (let [year (apply str (:content 
+                  (first (html/select page-content #{[:div#content :h2]}))))]
+    (map #(struct category (apply str (first %)) 
+                           (get-book-info (rest (second %))) 
+                           year)
          (parse-award-page page-content)))))
 
 (defn get-award-links [url]
