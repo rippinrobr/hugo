@@ -11,15 +11,28 @@
  []
  (sql/create-table
    :orgs
-  [:id :integer "PRIMARY KEY"])
+  [:id :integer "PRIMARY KEY"]
+  [:name "varchar(32)"])
 
  (sql/create-table
    :categories
-   [:id :integer "PRIMARY KEY"])
+   [:id :integer "PRIMARY KEY"]
+   [:org_id :integer]
+   [:name "varchar(64)"]
+   ["FOREIGN KEY(org_id) REFERENCES orgs(id)"])
 
  (sql/create-table
    :nominees
-   [:id :integer "PRIMARY KEY"]))
+   [:id :integer "PRIMARY KEY"]
+   [:org_id :integer]
+   [:category_id :integer]
+   [:title "varchar(32)"]
+   [:author "varchar(32)"]
+   [:read_it "tinyint"]
+   [:own_it "tinyint"]
+   [:want_it "tinyint"]
+   ["FOREIGN KEY(org_id) REFERENCES orgs(id)"]
+   ["FOREIGN KEY(category_id) REFERENCES categories(id)"]))
 
 (defn create-db
  "Creates a new database"
