@@ -42,22 +42,22 @@
      (interleave 
        (split-at 4 
          (html/select page-content #{[:div#content :p] [:p html/first-child]})) 
-       (map #(:content %) (html/select page-content #{[:div#content :ul ] })))))
+       (map :content (html/select page-content #{[:div#content :ul ] })))))
 
 (defn get-awards-per-year 
   "Retrieves the awards page, parses out the categories, 
    winners and nominees and then formats the data so 
    that it can manipulated more easily."
   [url]
-  (let [page-content (fetch-url url)]
-   (let [year (apply str (:content 
-                  (first (html/select page-content #{[:div#content :h2]}))))]
+  (let [page-content (fetch-url url)
+     year (apply str (:content 
+             (first (html/select page-content #{[:div#content :h2]}))))]
     (map #(struct category (apply str (first %)) 
                            (get-book-info (rest (second %))) 
                            year)
-         (parse-award-page page-content)))))
+         (parse-award-page page-content))))
 
 (defn get-award-links [url]
-  (map #(:attrs %)   (html/select (fetch-url url)
-                    #{[:div#content :li.page_item :a] 
-                      [:li.page.item.subtext html/first-child]})))
+  (map :attrs (html/select (fetch-url url)
+                #{[:div#content :li.page_item :a] 
+                  [:li.page.item.subtext html/first-child]})))
