@@ -71,7 +71,7 @@
 (defn get-category-id
   ([org-id name]
     (:id (first 
-      get-sql [(str get-all-cats " where org_id=? and name=?") org-id name])))))
+      get-sql [(str get-all-cats " where org_id=? and name=?") org-id name]))))
 
 (defn update-category
   ([id name]

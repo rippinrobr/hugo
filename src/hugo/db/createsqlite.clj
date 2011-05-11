@@ -27,7 +27,7 @@
    [:org_id :integer]
    [:category_id :integer]
    [:year :integer]
-   [:title "varchar(32)"]
+   [:title "varchar(64)"]
    [:author "varchar(32)"]
    [:winner "tinyint"]
    [:read_it "tinyint"]
