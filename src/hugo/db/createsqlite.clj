@@ -26,8 +26,10 @@
    [:id :integer "PRIMARY KEY"]
    [:org_id :integer]
    [:category_id :integer]
+   [:year :integer]
    [:title "varchar(32)"]
    [:author "varchar(32)"]
+   [:winner "tinyint"]
    [:read_it "tinyint"]
    [:own_it "tinyint"]
    [:want_it "tinyint"]
@@ -39,3 +41,10 @@
  []
  (sql/with-connection new-db-conn
    (sql/transaction (create-tables))))
+
+(defn drop-tables
+  []
+  (sql/with-connection new-db-conn
+   (sql/drop-table :nominees)
+   (sql/drop-table :categories)
+   (sql/drop-table :orgs)))
