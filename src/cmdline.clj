@@ -1,8 +1,7 @@
 (ns cmdline
   (:gen-class)
   (:use hugo.parser)
-  (:use hugo.text-formatting)
-  (:require [clojure.contrib.duck-streams :as duck]))
+  (:use hugo.text-formatting))
 
 (def *base-url* "http://www.thehugoawards.org/hugo-history/")
 
@@ -13,5 +12,5 @@
 
 (defn -main [& args]
     "Runs the parser and then writes the results to the output file"
-    (duck/spit "hugo_awards_best_novels.txt" 
+    (spit "hugo_awards_best_novels.txt" 
                (prep-for-file (take 12 (hugo.parser/get-award-links *base-url*)))))
