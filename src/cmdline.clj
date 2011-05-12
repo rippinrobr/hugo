@@ -2,6 +2,7 @@
   (:gen-class)
   (:use hugo.parser)
   (:use hugo.text-formatting)
+  (:use hugo.db.sqlite)
   (:use hugo.db.createsqlite)
   (:use clojure.contrib.command-line)
   (:require [clojure.contrib.duck-streams :as duck]))
@@ -13,12 +14,22 @@
   [rec]
   (apply str (map #(str (format-output (first (hugo.parser/get-awards-per-year (:href %)))) "\n") rec)))
 
+(defn create-and-load-db
+  "Creates a sqlite db and loads it with the parsed data"
+  [links]
+  (println "Number of links: " (count links))
+  (create-db)
+  (add-org "Hugo"))
+  ;(map #(str (first (hugo.parser/get-awards-per-year (:href %)))) links))
+
 (defn process-args
+  "Determines if it is going to create a text file or a database."
   [flag]
-  (if (= flag "text")
-   (duck/spit "hugo_awards_best_novels.txt" 
-        (prep-for-file (take 12 (hugo.parser/get-award-links *base-url*))))
-   (println "simulated db creation")))
+  (let [urls (hugo.parser/get-award-links *base-url*)]
+   (if (= flag "text")
+    (duck/spit "hugo_awards_best_novels.txt" 
+        (prep-for-file (take 12 urls)))
+    (create-and-load-db (take 2 urls)))))
 
 (defn -main [& args]
     "Runs the parser and then writes the results to the output file"

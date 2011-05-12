@@ -6,9 +6,17 @@
 ; this makes use db connection in the sqlite.clj file
 (def new-db-conn (merge db {:create true}))
 
+(defn drop-tables
+  []
+  (sql/with-connection new-db-conn
+   (sql/drop-table :nominees)
+   (sql/drop-table :categories)
+   (sql/drop-table :orgs)))
+
 (defn create-tables
  "Creates the tables needed to store the info about the award winners and nominees"
  []
+ (drop-tables)
  (sql/create-table
    :orgs
   [:id :integer "PRIMARY KEY"]
@@ -42,9 +50,3 @@
  (sql/with-connection new-db-conn
    (sql/transaction (create-tables))))
 
-(defn drop-tables
-  []
-  (sql/with-connection new-db-conn
-   (sql/drop-table :nominees)
-   (sql/drop-table :categories)
-   (sql/drop-table :orgs)))
