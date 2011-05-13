@@ -69,8 +69,9 @@
   [org-id award nominees]
    (let [cat-id (check-category-id org-id award)]
       (println "award " award)
-      (println "\ttitle " (:title (first nominees)))))
+      (map #(println "\t" (:title %)) nominees)))
  
 (defn process-awards
-  [org-id page]
-  (map #(parse-and-add-nominees org-id (:award %) (:books %)) page))
+  [awards-data]
+  (map :year awards-data))
+  ;(map #(parse-and-add-nominees org-id (:award %) (:books %)) page))

@@ -28,34 +28,16 @@
       (parse-author (second (:content work-data))))))
   
 (defn get-book-info 
-  "Formats the book data so that each book has a title which contais 
-   the book's title, author, and sometimes the publisher.  I also shows if
-   the book was a winner"
-  [nominees]
-  (map create-work-struct nominees))
+  [nominees] (map create-work-struct nominees))
 
-(defn parse-award-page 
-  "Takes the page data retrieved and formats it in such away that each 
-   hugo award group is stored with ((award title) (winner and nominees))"
+(defn parse-best-novel-nominees
   [page-content]
-  (partition 2 
-     (interleave 
-       (nthnext (html/select page-content [:p :strong]) 4)
-       (map :content (html/select page-content #{[:div#content :ul ] })))))
-
-(defn get-awards-per-year 
-  "Retrieves the awards page, parses out the categories, 
-   winners and nominees and then formats the data so 
-   that it can manipulated more easily."
-  [url]
-  (let [page-content (fetch-url url) year (apply str (:content 
-                  (first (html/select page-content #{[:div#content :h2]}))))]
-    (map #(struct category (apply str (:content (first %)))
-                           (get-book-info (rest (second %))) 
-                           year)
-         (parse-award-page page-content))))
-    ;(map #(struct category (apply str (first %)) 
-
+    (struct category "Best Novel" 
+      (keep #(if (not (nil? %)) %) 
+                 (first (map #(get-book-info (:content %)) 
+                         (html/select page-content [:div#content :ul])))) 
+      (Integer. (apply str (take 4 (apply str (:content (first (html/select page-content #{[:div#content :h2]})))))))))
+ 
 (defn get-award-links [url]
   (map :attrs (html/select (fetch-url url)
                     #{[:div#content :li.page_item :a] 
