@@ -19,8 +19,10 @@
   [links]
   (println "Number of links: " (count links))
   (create-db)
-  (add-org "Hugo"))
-  ;(map #(str (first (hugo.parser/get-awards-per-year (:href %)))) links))
+  (add-org "Hugo")
+  (let [org-id (get-org-id "Hugo")
+       awards-data (map #(hugo.parser/get-awards-per-year (:href %)) links)]
+    (map #(hugo.db.createsqlite/process-awards org-id %) awards-data)))
 
 (defn process-args
   "Determines if it is going to create a text file or a database."
@@ -29,7 +31,7 @@
    (if (= flag "text")
     (duck/spit "hugo_awards_best_novels.txt" 
         (prep-for-file (take 12 urls)))
-    (create-and-load-db (take 2 urls)))))
+    (create-and-load-db (take 1 urls)))))
 
 (defn -main [& args]
     "Runs the parser and then writes the results to the output file"

@@ -70,8 +70,7 @@
 
 (defn get-category-id
   ([org-id name]
-    (:id (first 
-      get-sql [(str get-all-cats " where org_id=? and name=?") org-id name]))))
+    (:id (first (get-sql [(str get-all-cats " where org_id=? and name=?") org-id name])))))
 
 (defn update-category
   ([id name]
@@ -125,3 +124,4 @@
   ([id org-id cat-id title author]
     (with-connection db
       (sql/update-values :nominees ["id=?" id] {:org_id org-id :category_id cat-id :title title :author author}))))
+

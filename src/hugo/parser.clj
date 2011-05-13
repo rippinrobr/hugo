@@ -40,8 +40,7 @@
   [page-content]
   (partition 2 
      (interleave 
-       (split-at 4 
-         (html/select page-content #{[:div#content :p] [:p html/first-child]})) 
+       (nthnext (html/select page-content [:p :strong]) 4)
        (map :content (html/select page-content #{[:div#content :ul ] })))))
 
 (defn get-awards-per-year 
@@ -51,10 +50,11 @@
   [url]
   (let [page-content (fetch-url url) year (apply str (:content 
                   (first (html/select page-content #{[:div#content :h2]}))))]
-    (map #(struct category (apply str (first %)) 
+    (map #(struct category (apply str (:content (first %)))
                            (get-book-info (rest (second %))) 
                            year)
          (parse-award-page page-content))))
+    ;(map #(struct category (apply str (first %)) 
 
 (defn get-award-links [url]
   (map :attrs (html/select (fetch-url url)

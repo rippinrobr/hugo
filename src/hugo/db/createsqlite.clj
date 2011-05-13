@@ -50,3 +50,27 @@
  (sql/with-connection new-db-conn
    (sql/transaction (create-tables))))
 
+;-----------------------------------------
+; process entries when loading from source
+;-----------------------------------------
+(defn add-category-and-return-id
+  [org-id cat-name]
+    (add-category (get-org-id "Hugo") cat-name)
+    (get-category-id org-id cat-name))
+  
+(defn check-category-id
+  [org-id cat-name]
+   (let [id (get-category-id org-id cat-name)]
+     (if (nil? id) 
+       (add-category-and-return-id org-id cat-name) 
+       id)))
+
+(defn parse-and-add-nominees
+  [org-id award nominees]
+   (let [cat-id (check-category-id org-id award)]
+      (println "award " award)
+      (println "\ttitle " (:title (first nominees)))))
+ 
+(defn process-awards
+  [org-id page]
+  (map #(parse-and-add-nominees org-id (:award %) (:books %)) page))
