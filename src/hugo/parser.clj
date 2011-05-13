@@ -20,6 +20,11 @@
   "Grabs the author's name"
   [authstr] (ccstring/trim (first (split-author-publisher-str authstr))))
 
+(defn parse-year
+  "takes the '2011 Hugo Awards' string and returns an int for the year"
+  [yearstr]
+    (Integer. (apply str (take 4 (apply str (:content (first yearstr)))))))
+
 (defn create-work-struct
   [work-data]
   (if (not (nil? (first (:content (first (:content work-data)))))) 
@@ -36,7 +41,7 @@
       (keep #(if (not (nil? %)) %) 
                  (first (map #(get-book-info (:content %)) 
                          (html/select page-content [:div#content :ul])))) 
-      (Integer. (apply str (take 4 (apply str (:content (first (html/select page-content #{[:div#content :h2]})))))))))
+      (parse-year (html/select page-content #{[:div#content :h2]}))))
  
 (defn get-award-links [url]
   (map :attrs (html/select (fetch-url url)
