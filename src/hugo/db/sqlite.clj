@@ -16,9 +16,6 @@
     (sql/with-query-results results sql-stmt
       (doall results))))
 
-;-------------------
-; nominees table
-;-------------------
 (defn add-nominee
   [year nominee]
    (with-connection db (sql/insert-values :nominees 
@@ -36,8 +33,3 @@
 (defn get-winners
   ([] (get-sql [(str get-all-nominees " where winner=1")]))
   ([year] (get-sql [(str get-all-nominees " where winner=1 and year=?") year])))
-
-(defn update-nominee
-  ([id read-it own-it want-it]
-    (with-connection db
-      (sql/update-values :nominees ["id=?" id] {:read_it read-it :own_it own-it :want_it want-it}))))

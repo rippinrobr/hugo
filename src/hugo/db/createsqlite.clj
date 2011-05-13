@@ -1,5 +1,6 @@
 (ns hugo.db.createsqlite
-  (:use [clojure.contrib.sql :only (with-connection with-query-results )] )
+  (:use [clojure.contrib.sql 
+      :only (with-connection with-query-results )] )
   (:use hugo.db.sqlite)
   (:require [clojure.contrib.sql :as sql]))
 
@@ -15,7 +16,6 @@
  "Creates the table needed to store the 
   winners and nominees."
  []
- ; add check here to see if the table exists already
  (sql/create-table
    :nominees
    [:id :integer "PRIMARY KEY"]
@@ -42,5 +42,4 @@
     (map #(add-nominee year %) (:books noms))))
 
 (defn process-awards
-  [awards-data]
-  (map add-new-nominees awards-data))
+  [awards-data] (map add-new-nominees awards-data))
