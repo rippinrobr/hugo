@@ -1,6 +1,4 @@
 (ns hugo.db.createsqlite
-  (:use [clojure.contrib.sql 
-      :only (with-connection with-query-results )] )
   (:use hugo.db.sqlite)
   (:require [clojure.contrib.sql :as sql]))
 
@@ -8,8 +6,7 @@
 (def new-db-conn (merge db {:create true}))
 
 (defn drop-tables
-  []
-  (sql/with-connection new-db-conn
+  [] (sql/with-connection new-db-conn
    (sql/drop-table :nominees)))
 
 (defn create-tables
@@ -31,7 +28,7 @@
  "Creates a new database"
  []
  (sql/with-connection new-db-conn
-   (sql/transaction (create-tables))))
+   (create-tables)))
 
 ;-----------------------------------------
 ; process entries when loading from source
@@ -42,4 +39,5 @@
     (map #(add-nominee year %) (:books noms))))
 
 (defn process-awards
-  [awards-data] (map add-new-nominees awards-data))
+  [awards-data] 
+   (map add-new-nominees awards-data))

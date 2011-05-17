@@ -2,10 +2,11 @@
   (:use [clojure.contrib.sql :only (with-connection with-query-results)] )
   (:require [clojure.contrib.sql :as sql]))
 
-(def db {:classname "org.sqlite.JDBC"
-         :subprotocol "sqlite"		; Protocol to use
-	 :subname "db/hugo.sqlite3"	; Location of the db
-         })
+(def db {
+  :classname "org.sqlite.JDBC"
+  :subprotocol "sqlite"		; Protocol to use
+  :subname "db/hugo.sqlite3"	; Location of the db
+})
 
 (def get-all-nominees "select * from nominees")
 
