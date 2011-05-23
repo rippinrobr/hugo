@@ -1,1 +1,2 @@
-(ns hugo.ui.core)
+(ns hugo.ui.core
+  (:import (javax.swing)))
