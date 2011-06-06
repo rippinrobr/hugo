@@ -1,4 +1,5 @@
 (ns hugo.ui.views.main-view
+  (:use hugo.db.sqlite)
   (:import 
      (java.awt.BorderLayout)
      (java.awt.event ActionListener)
@@ -11,6 +12,12 @@
   (doseq [item items] 
      (.addElement model item)) )
 
+(defn prep-data-for-list []
+  (let [data (get-nominees) years (distinct (map :year data))]
+    (println data)
+    (map #(format "%s - Best Novel Nominees/Winners") data)))
+    
+  
 (defn create-home-view []
    (let  [main-win (JFrame. "@rippinrobr's Hugo Best Novel Database")
     	  panel (JPanel.)
@@ -21,6 +28,7 @@
           scroll-pane (JScrollPane. list-box)]
 
    (.add panel title-label java.awt.BorderLayout/PAGE_START)
+   ;(add-list-items list-model titles)
    (add-list-items list-model ["2011 Hugo - Best Novel Nominees and Winner(s)" "       Book 1" "      Book 2" "2011 Hugo - Best Novel Nominees and Winner(s)" "       Book 1" "      Book 2" "2011 Hugo - Best Novel Nominees and Winner(s)" "       Book 1" "      Book 2" "2011 Hugo - Best Novel Nominees and Winner(s)" "       Book 1" "      Book 2" "2011 Hugo - Best Novel Nominees and Winner(s)" "       Book 1" "      Book 2" "2011 Hugo - Best Novel Nominees and Winner(s)" "       Book 1" "      Book 2" "2011 Hugo - Best Novel Nominees and Winner(s)" "       Book 1" "      Book 2" "2011 Hugo - Best Novel Nominees and Winner(s)" "       Book 1" "      Book 2" "2011 Hugo - Best Novel Nominees and Winner(s)" "       Book 1" "      Book 2" "2011 Hugo - Best Novel Nominees and Winner(s)" "       Book 1" "      Book 2" "2011 Hugo - Best Novel Nominees and Winner(s)" "       Book 1" "      Book 2" "2011 Hugo - Best Novel Nominees and Winner(s)" "       Book 1" "      Book 2" "2011 Hugo - Best Novel Nominees and Winner(s)" "       Book 1" "      Book 2"])
 
    (.setOpaque title-label true)
