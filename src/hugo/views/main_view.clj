@@ -1,4 +1,4 @@
-(ns hugo.ui.views.main-view
+(ns hugo.views.main-view
   (:use hugo.db.sqlite)
   (:import 
      (java.awt.BorderLayout)

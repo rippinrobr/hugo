@@ -1,5 +1,5 @@
-(ns hugo.ui.controllers.main-controller
-  (:use hugo.ui.views.main-view)
+(ns hugo.controllers.main-controller
+  (:use hugo.views.main-view)
   (:use hugo.db.sqlite))
 
 (defn- is-winner [data]
