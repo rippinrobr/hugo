@@ -34,3 +34,6 @@
 (defn get-winners
   ([] (get-sql [(str get-all-nominees " where winner=1")]))
   ([year] (get-sql [(str get-all-nominees " where winner=1 and year=?") year])))
+
+(defn get-years []
+  (get-sql ["select distinct year from nominees order by year desc"]))
